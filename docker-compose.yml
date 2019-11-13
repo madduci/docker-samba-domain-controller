@@ -1,0 +1,34 @@
+version: "2.4"
+services:
+  domain-controller:
+    image:  madduci/docker-samba-domain-controller:latest
+    build: 
+      context: ./samba
+    environment:
+      - SAMBA_DC_REALM=MYDC.EXAMPLE.COM
+      - SAMBA_DC_DOMAIN=EXAMPLE
+      - SAMBA_DC_ADMIN_PASSWD=Ch3ng3Me!
+      - SAMBA_DC_DNS_BACKEND=SAMBA_INTERNAL
+    cap_add:
+      - SYS_ADMIN
+    volumes:
+      - samba_config:/etc/samba
+      - samba_data:/var/lib/samba
+      - samba_logs:/var/log/samba
+    ports:
+      - 1389:389
+      - 1636:636
+    domainname: example.com
+    hostname: mydc
+    networks: 
+      samba:
+        aliases: 
+          - mydc.example.com
+
+networks: 
+  samba:
+
+volumes:
+  samba_config:
+  samba_data:
+  samba_logs:
